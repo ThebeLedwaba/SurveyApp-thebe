@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .nav-tab.active {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .form-control.error {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .rating-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .rating-item:hover {
+            background: #e9ecef;
+        }
+
+        .rating-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .rating-select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 120px;
+            background: white;
+        }
+
+        .rating-select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40,167,69,0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            min-height: 150px; /* Ensure consistent height for longer labels */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.2; /* Improve text spacing */
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            word-wrap: break-word; /* Allow long labels to wrap */
+            padding: 0 10px; /* Add padding for readability */
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        .no-data h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .rating-item {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .nav-tab {
+                padding: 15px 10px;
+                font-size: 1rem;
+            }
+            
+            .stat-card {
+                min-height: 120px; /* Adjust for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Survey App</h1>
+            <p>Share your preferences and view community insights</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('form')">📝 Fill Out Survey</button>
+            <button class="nav-tab" onclick="showTab('stats')">📊 View Survey Results</button>
+        </div>
+        
+        <div class="content">
+            <!-- Survey Form Section -->
+            <div id="form-section" class="form-section active">
+                <div id="message"></div>
+                
+                <form id="surveyForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" class="form-control" required>
+                        <div class="error-message" id="fullName-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number *</label>
+                        <input type="tel" id="contactNumber" name="contactNumber" class="form-control" maxlength="10" required>
+                        <div class="error-message" id="contactNumber-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth *</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
+                        <div class="error-message" id="dateOfBirth-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Favorite Foods * (Select at least one)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="favoriteFoods" value="Pizza">
+                                🍕 Pizza
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="favoriteFoods" value="Pap and Wors">
+                                🌭 Pap and Wors
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="favoriteFoods" value="Other">
+                                🍽️ Other
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="favoriteFoods" value="Pasta">
+                                🍝 Pasta
+                            </label>
+                        </div>
+                        <div class="error-message" id="favoriteFoods-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Rate Your Interest (1-5 scale) *</label>
+                        <div class="rating-grid">
+                            <div class="rating-item">
+                                <span class="rating-label">🍽️ Eating Out</span>
+                                <select name="eatOut" class="rating-select" required>
+                                    <option value="">Select</option>
+                                    <option value="1">1 - Not Interested</option>
+                                    <option value="2">2 - Slightly Interested</option>
+                                    <option value="3">3 - Moderately Interested</option>
+                                    <option value="4">4 - Very Interested</option>
+                                    <option value="5">5 - Extremely Interested</option>
+                                </select>
+                            </div>
+                            <div class="rating-item">
+                                <span class="rating-label">🎬 Watching Movies</span>
+                                <select name="watchMovies" class="rating-select" required>
+                                    <option value="">Select</option>
+                                    <option value="1">1 - Not Interested</option>
+                                    <option value="2">2 - Slightly Interested</option>
+                                    <option value="3">3 - Moderately Interested</option>
+                                    <option value="4">4 - Very Interested</option>
+                                    <option value="5">5 - Extremely Interested</option>
+                                </select>
+                            </div>
+                            <div class="rating-item">
+                                <span class="rating-label">📺 Watching TV</span>
+                                <select name="watchTV" class="rating-select" required>
+                                    <option value="">Select</option>
+                                    <option value="1">1 - Not Interested</option>
+                                    <option value="2">2 - Slightly Interested</option>
+                                    <option value="3">3 - Moderately Interested</option>
+                                    <option value="4">4 - Very Interested</option>
+                                    <option value="5">5 - Extremely Interested</option>
+                                </select>
+                            </div>
+                            <div class="rating-item">
+                                <span class="rating-label">📻 Listening to Radio</span>
+                                <select name="listenRadio" class="rating-select" required>
+                                    <option value="">Select</option>
+                                    <option value="1">1 - Not Interested</option>
+                                    <option value="2">2 - Slightly Interested</option>
+                                    <option value="3">3 - Moderately Interested</option>
+                                    <option value="4">4 - Very Interested</option>
+                                    <option value="5">5 - Extremely Interested</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="error-message" id="ratings-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Submit Survey
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Stats Section -->
+            <div id="stats-section" class="form-section">
+                <div id="stats-content">
+                    <div class="loading">📊 Loading statistics...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 'form';
+        
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabName + '-section').classList.add('active');
+            
+            currentTab = tabName;
+            
+            if (tabName === 'stats') {
+                loadStats();
+            }
+        }
+        
+        // Form validation
+        function validateForm(formData) {
+            const errors = {};
+            
+            if (!formData.fullName || formData.fullName.trim() === '') {
+                errors.fullName = 'Full name is required';
+            }
+            
+            if (!formData.email || formData.email.trim() === '') {
+                errors.email = 'Email is required';
+            } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                errors.email = 'Please enter a valid email address';
+            }
+            
+            if (!formData.contactNumber || formData.contactNumber.trim() === '') {
+                errors.contactNumber = 'Contact number is required';
+            } else if (!/^\d{10}$/.test(formData.contactNumber)) {
+                errors.contactNumber = 'Contact number must be exactly 10 digits';
+            }
+            
+            if (!formData.dateOfBirth) {
+                errors.dateOfBirth = 'Date of birth is required';
+            } else {
+                const birthDate = new Date(formData.dateOfBirth);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age < 5 || age > 120) {
+                    errors.dateOfBirth = 'Age must be between 5 and 120 years';
+                }
+            }
+            
+            if (!formData.favoriteFoods || formData.favoriteFoods.length === 0) {
+                errors.favoriteFoods = 'Please select at least one favorite food';
+            }
+            
+            if (!formData.ratings.eatOut) errors.eatOut = 'Please rate your interest in eating out';
+            if (!formData.ratings.watchMovies) errors.watchMovies = 'Please rate your interest in watching movies';
+            if (!formData.ratings.watchTV) errors.watchTV = 'Please rate your interest in watching TV';
+            if (!formData.ratings.listenRadio) errors.listenRadio = 'Please rate your interest in listening to radio';
+            
+            return errors;
+        }
+        
+        // Show validation errors
+        function showErrors(errors) {
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+            
+            Object.keys(errors).forEach(field => {
+                const errorElement = document.getElementById(field + '-error');
+                const inputElement = document.getElementById(field);
+                if (errorElement) errorElement.textContent = errors[field];
+                if (inputElement) inputElement.classList.add('error');
+            });
+            
+            if (Object.keys(errors).some(key => ['eatOut', 'watchMovies', 'watchTV', 'listenRadio'].includes(key))) {
+                document.getElementById('ratings-error').textContent = 'Please complete all rating fields';
+            }
+        }
+        
+        // Show message
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Form submission
+        document.getElementById('surveyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const formData = new FormData(this);
+            
+            const data = {
+                fullName: formData.get('fullName'),
+                email: formData.get('email'),
+                contactNumber: formData.get('contactNumber'),
+                dateOfBirth: formData.get('dateOfBirth'),
+                favoriteFoods: formData.getAll('favoriteFoods'),
+                ratings: {
+                    eatOut: parseInt(formData.get('eatOut')) || null,
+                    watchMovies: parseInt(formData.get('watchMovies')) || null,
+                    watchTV: parseInt(formData.get('watchTV')) || null,
+                    listenRadio: parseInt(formData.get('listenRadio')) || null
+                }
+            };
+            
+            console.log('Submitting data:', data);
+            
+            const errors = validateForm(data);
+            if (Object.keys(errors).length > 0) {
+                showErrors(errors);
+                showMessage('Please fix the errors below', 'error');
+                return;
+            }
+            
+            showErrors({});
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                const response = await axios.post('http://localhost:5001/api/surveys/submit', data, {
+                    headers: { 'Content-Type': 'application/json' },
+                    timeout: 10000
+                });
+                
+                console.log('Success:', response.data);
+                showMessage('🎉 Survey submitted successfully! Thank you for your participation.', 'success');
+                this.reset();
+            } catch (error) {
+                console.error('Error:', error);
+                let errorMessage = 'Sorry, there was an error submitting your survey. Please try again.';
+                if (error.code === 'ECONNABORTED') {
+                    errorMessage = 'Request timeout. Please check if the server is running and try again.';
+                } else if (error.response) {
+                    errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage = 'Cannot connect to server. Please make sure the backend is running on port 5001.';
+                }
+                showMessage(errorMessage, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Survey';
+            }
+        });
+        
+        // Load statistics
+        async function loadStats() {
+            const statsContent = document.getElementById('stats-content');
+            statsContent.innerHTML = '<div class="loading">📊 Loading statistics...</div>';
+            
+            try {
+                const response = await axios.get('http://localhost:5001/api/surveys/stats', {
+                    timeout: 10000
+                });
+                
+                const stats = response.data;
+                console.log('Stats:', stats);
+                
+                if (stats.message === 'No Surveys Available') {
+                    statsContent.innerHTML = `
+                        <div class="no-data">
+                            <h3>📝 No Survey Data Yet</h3>
+                            <p>Be the first to submit a survey to see statistics!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                statsContent.innerHTML = `
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #495057;">📈 Survey Results</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalSurveys}</div>
+                            <div class="stat-label">Total number of surveys</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.averageAge}</div>
+                            <div class="stat-label">Average Age</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.oldest}</div>
+                            <div class="stat-label">Oldest person who participated in survey</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.youngest}</div>
+                            <div class="stat-label">Youngest person who participated in survey</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.pizzaLoversPercentage}%</div>
+                            <div class="stat-label">Percentage of people who like Pizza</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.papWorsPercentage}%</div>
+                            <div class="stat-label">Percentage of people who like Pap and Wors</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.averageEatOutRating}/5</div>
+                            <div class="stat-label">People who like to eat out</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.averageWatchMoviesRating}/5</div>
+                            <div class="stat-label">People who like to watch movies</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.averageWatchTVRating}/5</div>
+                            <div class="stat-label">People who like to watch TV</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.averageListenRadioRating}/5</div>
+                            <div class="stat-label">People who like to listen to radio</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                let errorMessage = 'Error loading statistics. Please try again.';
+                if (error.request) {
+                    errorMessage = 'Cannot connect to server. Please make sure the backend is running.';
+                }
+                statsContent.innerHTML = `
+                    <div class="no-data">
+                        <h3>❌ Error Loading Statistics</h3>
+                        <p>${errorMessage}</p>
+                        <button onclick="loadStats()" style="margin-top: 15px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Try Again</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Set max date for date input to today
+        document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0];
+        
+        // Clear individual field errors when user starts typing
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorElement = document.getElementById(this.name + '-error');
+                if (errorElement) errorElement.textContent = '';
+            });
+        });
+        
+        console.log('Survey app initialized successfully!');
+    </script>
+</body>
+</html>
