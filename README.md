@@ -109,23 +109,3 @@ Form submission loading state needs improvement
 Chart tooltips occasionally misalign
    cd lifestyle-survey-mern
 
-## 📂 Project Structure
-lifestyle-survey-mern/
-├── client/ # Frontend React application
-│ ├── public/ # Static files
-│ └── src/ # React source code
-│ ├── components/ # Reusable UI components
-│ ├── pages/ # Application screens
-│ ├── utils/ # Helper functions
-│ └── App.js # Main application component
-│
-├── server/ # Backend Express application
-│ ├── config/ # Configuration files
-│ ├── controllers/ # Route controllers
-│ ├── models/ # MongoDB models
-│ ├── routes/ # API endpoint definitions
-│ ├── middlewares/ # Custom middleware
-│ └── server.js # Entry point
-│
-├── .env.example # Environment variables template
-└── README.md # Project documentation
