@@ -1,100 +1,112 @@
-MERN Lifestyle Survey App
-A simple and responsive survey application built using the MERN stack. Users can submit lifestyle preferences, and the system calculates summary statistics based on the data collected.
+# 🌱 Lifestyle Survey App (MERN Stack)
 
-📁 Project Structure
-lifestyle-survey-mern-thebe/
-├── survey-backend/
-│   ├── controllers/
-│   │   └── surveyController.js
-│   ├── models/
-│   │   └── Survey.js
-│   ├── routes/
-│   │   └── surveyRoutes.js
-│   ├── server.js
-│   └── package.json
-├── frontend/
-│   └── index.html
-└── README.md
-🚀 Technologies Used
-Frontend:
+![MERN Stack](https://img.shields.io/badge/MERN-Full%20Stack-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Responsive](https://img.shields.io/badge/Responsive-Yes-success)
 
-HTML – Structure
+A modern survey application that collects lifestyle preferences and provides real-time statistics visualization. Built with the MERN stack (MongoDB, Express, React, Node.js) with emphasis on clean UI and data integrity.
 
-CSS – Styling, responsiveness, gradients, and animations
+## ✨ Features
 
-JavaScript – Form handling and Axios for API communication
+- **Interactive Survey Form** with animated transitions
+- **Real-time Statistics Dashboard** showing survey aggregates
+- **Responsive Design** works on desktop & mobile
+- **Data Validation** both client-side and server-side
+- **Persistent Storage** using MongoDB Atlas
+- **Modern UI** with gradient backgrounds and card-based layout
 
-Backend:
+## 🛠 Tech Stack
 
-Node.js & Express.js – API development
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| React | Interactive UI components |
+| Axios | HTTP client for API calls |
+| Chart.js | Data visualization |
+| Tailwind CSS | Modern styling utility classes |
+| Framer Motion | Smooth animations |
 
-Express-validator – Server-side input validation
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js | JavaScript runtime |
+| Express | Web application framework |
+| Mongoose | MongoDB object modeling |
+| Express-validator | Input sanitization |
+| CORS | Cross-origin resource sharing |
 
-Database:
+### Database
+| Technology | Purpose |
+|------------|---------|
+| MongoDB | NoSQL document storage |
+| MongoDB Atlas | Cloud database service |
 
-MongoDB – Data storage and retrieval
+## 🚀 Getting Started
 
-Development Tools:
+### Prerequisites
+- Node.js v16+
+- MongoDB Atlas account or local MongoDB instance
+- Git
 
-Visual Studio Code
+### Installation
 
-Live Server (for frontend preview)
-
-Bandicam (for demo screen recording)
-
-🛠️ Development Process
-UI Design: Created two main screens using HTML and styled them with CSS to include gradient backgrounds, animations, and a card-based layout.
-
-Backend Setup: Built RESTful APIs using Node.js and Express.js, and connected to MongoDB using Mongoose.
-
-Validation: Implemented both client-side and server-side validation for robust data integrity, including checks for age (5–120) and rating (1–5).
-
-Testing & Debugging: Tested each module (form submission, database save, stats retrieval) thoroughly and iteratively refined the codebase.
-
-Enhancements: Added the “Pasta” option as a late addition to fully align with all food preference criteria.
-
-⚙️ Challenges & Solutions
-Validation Consistency:
-Ensuring age and rating constraints were enforced on both the frontend and backend. Solved by applying the same validation rules in JavaScript and Express-validator.
-
-Design Adjustments:
-Longer stat labels affected the layout. Fixed using responsive CSS styling—flexible card heights and proper text wrapping.
-
-Port Mismatch:
-Axios initially pointed to port 5000 while the backend was running on 5001. Corrected by updating all API URLs.
-
-Audio Quality in Demo:
-The voice in the demo was too low. Adjusted microphone settings in Bandicam to resolve the issue.
-
-🔮 Future Improvements
-Real-Time Updates:
-Implement WebSockets or polling to update stats without needing to refresh or switch tabs.
-
-User Authentication:
-Introduce a login system to personalize survey submissions (noting exemption from POPI Act requirements for this academic demo).
-
-Mobile Optimization:
-Improve touch responsiveness and layout on mobile devices.
-
-Data Export:
-Add functionality to export survey responses as CSV for further analysis.
-
-🔧 Setup Instructions
-Set environment variables:
-
-bash
-Copy
-Edit
-MONGODB_URI=your_mongodb_connection_string
-PORT=5001
-Start the backend:
-
-bash
-Copy
-Edit
-cd survey-backend
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ThebeLedwaba/lifestyle-survey-mern.git
+cd server
+npm install
+cp .env.example .env
+# Edit .env with your MongoDB URI
+npm start
+cd ../client
 npm install
 npm start
-Run the frontend:
+Access the application
+Frontend: http://localhost:3000
+API Server: http://localhost:5001
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Database
+    
+    User->>Frontend: Submits survey form
+    Frontend->>Backend: POST /api/surveys
+    Backend->>Database: Validate & Save
+    Database-->>Backend: Success confirmation
+    Backend-->>Frontend: 201 Created
+    Frontend->>User: Show success message
+    
+    User->>Frontend: Requests statistics
+    Frontend->>Backend: GET /api/statistics
+    Backend->>Database: Aggregate data
+    Database-->>Backend: Statistics
+    Backend-->>Frontend: 200 OK with data
+    Frontend->>User: Visualize results
+ Development Roadmap
+Current Features
+Multi-field survey form
 
-Open frontend/index.html in your browser using Live Server (e.g. http://127.0.0.1:5500/frontend/index.html)
+Data validation pipeline
+
+Statistics dashboard
+
+Responsive layout
+
+Planned Improvements
+User authentication (JWT)
+
+Real-time updates with Socket.io
+
+PDF report generation
+
+Admin dashboard
+
+Multi-language support
+ Known Issues
+Mobile Safari sometimes has animation glitches
+Form submission loading state needs improvement
+Chart tooltips occasionally misalign
+   cd lifestyle-survey-mern
+
+## 📂 Project Structure
